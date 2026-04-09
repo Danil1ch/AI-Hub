@@ -68,8 +68,8 @@ Looking for a **free ChatGPT desktop client**, **Claude alternative**, **Gemini 
 ### Run from source
 
 ```bash
-git clone https://github.com/Danil1ch/ai-hub.git
-cd ai-hub
+git clone https://github.com/Danil1ch/AI-Hub.git
+cd AI-Hub
 npm install
 npm run dev
 ```
@@ -88,9 +88,9 @@ Names like **ChatGPT**, **Claude**, **Gemini**, **Copilot**, etc. are **trademar
 
 ### Links
 
-- **Source:** [github.com/Danil1ch/ai-hub](https://github.com/Danil1ch/ai-hub)
-- **Issues:** [github.com/Danil1ch/ai-hub/issues](https://github.com/Danil1ch/ai-hub/issues)
-- **Releases (when published):** [github.com/Danil1ch/ai-hub/releases](https://github.com/Danil1ch/ai-hub/releases)
+- **Source:** [github.com/Danil1ch/AI-Hub](https://github.com/Danil1ch/AI-Hub)
+- **Issues:** [github.com/Danil1ch/AI-Hub/issues](https://github.com/Danil1ch/AI-Hub/issues)
+- **Releases (when published):** [github.com/Danil1ch/AI-Hub/releases](https://github.com/Danil1ch/AI-Hub/releases)
 
 ---
 
@@ -133,8 +133,8 @@ Names like **ChatGPT**, **Claude**, **Gemini**, **Copilot**, etc. are **trademar
 ### Запуск из исходников
 
 ```bash
-git clone https://github.com/Danil1ch/ai-hub.git
-cd ai-hub
+git clone https://github.com/Danil1ch/AI-Hub.git
+cd AI-Hub
 npm install
 npm run dev
 ```
@@ -153,6 +153,6 @@ npm run dist
 
 ### Ссылки
 
-- **Репозиторий:** [github.com/Danil1ch/ai-hub](https://github.com/Danil1ch/ai-hub)
-- **Замечания по багам:** [github.com/Danil1ch/ai-hub/issues](https://github.com/Danil1ch/ai-hub/issues)
-- **Релизы:** [github.com/Danil1ch/ai-hub/releases](https://github.com/Danil1ch/ai-hub/releases)
+- **Репозиторий:** [github.com/Danil1ch/AI-Hub](https://github.com/Danil1ch/AI-Hub)
+- **Замечания по багам:** [github.com/Danil1ch/AI-Hub/issues](https://github.com/Danil1ch/AI-Hub/issues)
+- **Релизы:** [github.com/Danil1ch/AI-Hub/releases](https://github.com/Danil1ch/AI-Hub/releases)
