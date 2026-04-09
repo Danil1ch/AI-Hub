@@ -1,8 +1,16 @@
+<!-- GitHub ignores relative paths in <video>; use raw URL so the player renders -->
 <p align="center">
-  <video src="docs/media/ai-hub-preview.mp4" width="100%" controls playsinline></video>
+  <video
+    src="https://raw.githubusercontent.com/Danil1ch/AI-Hub/main/docs/media/ai-hub-preview.mp4"
+    width="100%"
+    controls
+    playsinline
+  ></video>
 </p>
 
-<p align="center"><a href="docs/media/ai-hub-preview.mp4">Download / open the demo video (MP4)</a></p>
+<p align="center">
+  <a href="https://github.com/Danil1ch/AI-Hub/raw/main/docs/media/ai-hub-preview.mp4">Download / open the demo video (MP4)</a>
+</p>
 
 ---
 
