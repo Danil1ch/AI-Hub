@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --accent: #10a37f;
+  --accent-muted: color-mix(in srgb, var(--accent) 18%, transparent);
+  --line: rgba(255, 255, 255, 0.055);
+  --surface: #18181b;
+  --surface-elevated: #1f1f23;
+  --surface-hover: rgba(255, 255, 255, 0.055);
+  --canvas: #141416;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+#root {
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+@keyframes choose-card-enter {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.choose-service-card:hover {
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--accent-glow) 22%, transparent),
+    0 12px 40px -16px color-mix(in srgb, var(--accent-glow) 55%, transparent);
+}
+
+/* Subtle film grain (desktop product feel) */
+.choose-screen-noise {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+  mix-blend-mode: overlay;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .choose-service-card {
+    animation: none !important;
+  }
+
+  .choose-service-card:hover {
+    transform: none;
+  }
+}

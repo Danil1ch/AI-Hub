@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/app-icon.svg" />
+    <title>AI Hub</title>
+    <link rel="stylesheet" href="./splash-overlay.css" />
+  </head>
+  <body class="m-0 overflow-hidden antialiased">
+    <div id="root"></div>
+
+    <!-- Cold start only: boot script toggles visibility via ?firstLaunch=1 -->
+    <div id="ai-hub-splash" class="ai-hub-splash-root" aria-hidden="true">
+      <div class="ahs-noise" aria-hidden="true"></div>
+      <main class="ahs-stage">
+        <div class="ahs-splash" aria-label="AI Hub">
+          <div class="ahs-markWrap" aria-hidden="true">
+            <div class="ahs-mark">
+              <div class="ahs-grid">
+                <div class="ahs-tile ahs-accent ahs-t1"></div>
+                <div class="ahs-tile ahs-t2"></div>
+                <div class="ahs-tile ahs-t3"></div>
+                <div class="ahs-tile ahs-t4"></div>
+              </div>
+            </div>
+          </div>
+          <div class="ahs-text">
+            <div class="ahs-title">AI Hub</div>
+            <div class="ahs-subtitle">Everything in one place</div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      ;(function () {
+        try {
+          if (new URLSearchParams(window.location.search).get('firstLaunch') !== '1') return
+          var el = document.getElementById('ai-hub-splash')
+          if (!el) return
+          var clean = window.location.pathname + window.location.hash
+          window.history.replaceState({}, document.title, clean)
+          var SPLASH_HOLD_MS = 3150
+          var OVERLAY_FADE_MS = 1100
+          el.classList.add('ai-hub-splash--visible')
+          el.setAttribute('aria-hidden', 'false')
+          window.addEventListener('load', function () {
+            window.setTimeout(function () {
+              el.classList.add('ai-hub-splash--dismiss')
+              window.setTimeout(function () {
+                el.classList.remove('ai-hub-splash--visible', 'ai-hub-splash--dismiss')
+                el.setAttribute('aria-hidden', 'true')
+                el.innerHTML = ''
+                try {
+                  if (window.hub && typeof window.hub.markIntroSeen === 'function') {
+                    void window.hub.markIntroSeen()
+                  }
+                } catch (_) {}
+              }, OVERLAY_FADE_MS)
+            }, SPLASH_HOLD_MS)
+          })
+        } catch (_) {}
+      })()
+    </script>
+    <script type="module" src="./main.tsx"></script>
+  </body>
+</html>
