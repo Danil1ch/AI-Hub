@@ -1,7 +1,7 @@
-<!-- GitHub ignores relative paths in <video>; use raw URL so the player renders -->
+<!-- Hosted via Issue upload so <video> renders on the repo homepage (user-attachments) -->
 <p align="center">
   <video
-    src="https://raw.githubusercontent.com/Danil1ch/AI-Hub/main/docs/media/ai-hub-preview.mp4"
+    src="https://github.com/user-attachments/assets/d6740cdf-77f5-4d28-ab5c-ebf1e9470fb7"
     width="100%"
     controls
     playsinline
@@ -9,7 +9,9 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/Danil1ch/AI-Hub/raw/main/docs/media/ai-hub-preview.mp4">Download / open the demo video (MP4)</a>
+  <a href="https://github.com/user-attachments/assets/d6740cdf-77f5-4d28-ab5c-ebf1e9470fb7">Open the demo video (MP4)</a>
+  ·
+  <a href="https://github.com/Danil1ch/AI-Hub/issues/1">Issue #1 (upload source)</a>
 </p>
 
 ---
