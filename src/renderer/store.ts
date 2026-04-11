@@ -2,6 +2,7 @@ import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 import type { ServiceId } from '../shared/services'
 import type { InternetDnsMode } from '../shared/internetDns'
+import type { UiLocale, UiLocalePreference } from '../shared/uiLocale'
 
 export type LayoutMode = 1 | 2 | 3 | 4
 
@@ -19,7 +20,25 @@ interface HubState {
   setLayoutMode: (mode: LayoutMode) => void
   setLayoutSlot: (idx: 0 | 1 | 2 | 3, id: ServiceId | null) => void
   swapLayoutSlots: (a: 0 | 1 | 2 | 3, b: 0 | 1 | 2 | 3) => void
+  /** Display / i18n locale. Defaults to English until the user toggles the language control. */
+  uiLocalePreference: UiLocalePreference
+  /** Once true, `uiLocalePreference` is left as the user chose (still migrated if invalid). */
+  uiLocaleUserPicked: boolean
+  setUiLocalePreference: (pref: UiLocalePreference) => void
 }
+
+/** Slice written to `localStorage` (see `partialize`). */
+type HubPersistSlice = Pick<
+  HubState,
+  | 'activeId'
+  | 'lastSessionId'
+  | 'internetDnsMode'
+  | 'internetDohUrl'
+  | 'layoutMode'
+  | 'layoutSlots'
+  | 'uiLocalePreference'
+  | 'uiLocaleUserPicked'
+>
 
 export const useHubStore = create<HubState>()(
   persist(
@@ -54,10 +73,40 @@ export const useHubStore = create<HubState>()(
           next[a] = next[b]
           next[b] = tmp
           return { layoutSlots: next }
-        })
+        }),
+      uiLocalePreference: 'en',
+      uiLocaleUserPicked: false,
+      setUiLocalePreference: (pref) => set({ uiLocalePreference: pref, uiLocaleUserPicked: true })
     }),
     {
       name: 'ai-hub-shell',
+      version: 2,
+      migrate: (persisted, fromVersion) => {
+        let p = persisted as Partial<HubPersistSlice> & { uiLocalePreference?: string }
+        if (fromVersion === 0) {
+          const raw = p.uiLocalePreference
+          const pickedExplicit = raw === 'en' || raw === 'ru'
+          const picked =
+            p.uiLocaleUserPicked === true
+              ? true
+              : raw === 'system' || raw === undefined
+                ? false
+                : pickedExplicit
+          const pref: UiLocale = pickedExplicit ? (raw as UiLocale) : 'en'
+          p = {
+            ...p,
+            uiLocalePreference: pref,
+            uiLocaleUserPicked: picked
+          }
+        }
+        if (fromVersion < 2) {
+          const slice = p as HubPersistSlice
+          if (slice.uiLocaleUserPicked !== true) {
+            return { ...slice, uiLocalePreference: 'en' as const }
+          }
+        }
+        return p as HubPersistSlice
+      },
       storage: createJSONStorage(() => localStorage),
       partialize: (s) => ({
         activeId: s.activeId,
@@ -65,7 +114,9 @@ export const useHubStore = create<HubState>()(
         internetDnsMode: s.internetDnsMode,
         internetDohUrl: s.internetDohUrl,
         layoutMode: s.layoutMode,
-        layoutSlots: s.layoutSlots
+        layoutSlots: s.layoutSlots,
+        uiLocalePreference: s.uiLocalePreference,
+        uiLocaleUserPicked: s.uiLocaleUserPicked
       })
     }
   )

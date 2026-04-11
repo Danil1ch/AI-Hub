@@ -2,22 +2,21 @@ import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState }
 import { SERVICES, getService, type ServiceId } from '../../shared/services'
 import { EMBED_FRAME_INSET_PX } from '../../shared/shell'
 import { useHubStore, type LayoutMode } from '../store'
+import { useTranslation } from '../useTranslation'
 import { ServiceBrandIcon } from './ServiceBrandIcon'
 
 type WebviewEl = HTMLElement & {
   src: string
   partition: string
+  loadURL: (url: string) => Promise<void> | void
   reloadIgnoringCache: () => void
   getURL: () => string
 }
 
 export type EmbeddedWorkspaceHandle = {
   hardReload: () => void
+  goHome: () => void
 }
-
-/** DeepSeek’s CDN/WAF often serves a blank page for Electron’s default UA; match desktop Chrome. */
-const DEEPSEEK_WEBVIEW_UA =
-  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0'
 
 function createWebview(serviceId: ServiceId): WebviewEl {
   const { homeUrl } = getService(serviceId)
@@ -26,9 +25,6 @@ function createWebview(serviceId: ServiceId): WebviewEl {
     serviceId === 'deepseek' ? 'persist:svc.deepseek.chrome-ua' : `persist:svc.${serviceId}`
   w.src = homeUrl
   w.setAttribute('allowpopups', 'allowpopups')
-  if (serviceId === 'deepseek') {
-    w.setAttribute('useragent', DEEPSEEK_WEBVIEW_UA)
-  }
   w.style.border = 'none'
   w.style.backgroundColor = '#141416'
   return w
@@ -51,6 +47,7 @@ function slotClass(mode: LayoutMode, idx: number): string {
 }
 
 export const EmbeddedWorkspace = forwardRef<EmbeddedWorkspaceHandle>(function EmbeddedWorkspace(_, ref) {
+  const { t } = useTranslation()
   const activeId = useHubStore((s) => s.activeId)
   const layoutMode = useHubStore((s) => s.layoutMode)
   const layoutSlots = useHubStore((s) => s.layoutSlots)
@@ -78,6 +75,12 @@ export const EmbeddedWorkspace = forwardRef<EmbeddedWorkspaceHandle>(function Em
         if (!activeId) return
         const w = poolRef.current.get(activeId)
         w?.reloadIgnoringCache()
+      },
+      goHome: () => {
+        if (!activeId) return
+        const w = poolRef.current.get(activeId)
+        if (!w || typeof w.loadURL !== 'function') return
+        void w.loadURL(getService(activeId).homeUrl)
       }
     }),
     [activeId]
@@ -204,7 +207,7 @@ export const EmbeddedWorkspace = forwardRef<EmbeddedWorkspaceHandle>(function Em
               ) : (
                 <div className="absolute inset-0 flex items-center justify-center bg-[color-mix(in_srgb,var(--surface-elevated)_70%,black)]">
                   <div className="w-full max-w-[280px] rounded-xl border border-white/[0.08] bg-white/[0.03] p-3.5">
-                    <p className="mb-2 text-[12px] font-medium text-stone-300">Choose a service</p>
+                    <p className="mb-2 text-[12px] font-medium text-stone-300">{t('embed.chooseService')}</p>
                     <div className="grid max-h-[220px] grid-cols-2 gap-2 overflow-auto pr-1">
                       {SERVICES.map((s) => (
                         <button
@@ -242,6 +245,7 @@ function TileSwitch({
   active: boolean
   onPick: (id: ServiceId) => void
 }) {
+  const { t } = useTranslation()
   const [open, setOpen] = useState(false)
   const rootRef = useRef<HTMLDivElement>(null)
 
@@ -281,7 +285,7 @@ function TileSwitch({
         }`}
         aria-haspopup="listbox"
         aria-expanded={open}
-        aria-label={`Switch service for tile ${slotIdx + 1}`}
+        aria-label={t('embed.tileSwitchAria').replace('{{n}}', String(slotIdx + 1))}
       >
         <ServiceBrandIcon id={serviceId} accent={svc.accent} width={14} height={14} />
         <span className="min-w-0 max-w-[140px] truncate">{svc.label}</span>

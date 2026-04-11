@@ -11,9 +11,22 @@ export function webviewPartitionNames(): string[] {
   )
 }
 
+function hubSessions(): Electron.Session[] {
+  return [session.defaultSession, ...webviewPartitionNames().map((p) => session.fromPartition(p))]
+}
+
 export async function flushHostResolverCaches(): Promise<void> {
-  const sessions = [session.defaultSession, ...webviewPartitionNames().map((p) => session.fromPartition(p))]
+  await Promise.all(hubSessions().map((s) => s.clearHostResolverCache().catch(() => undefined)))
+}
+
+/**
+ * After DNS settings change: drop resolver cache + HTTP cache for default session and all
+ * service webviews so lookups and pages don’t stick to stale state.
+ */
+export async function flushInternetDnsAfterConfigChange(): Promise<void> {
+  const sessions = hubSessions()
   await Promise.all(sessions.map((s) => s.clearHostResolverCache().catch(() => undefined)))
+  await Promise.all(sessions.map((s) => s.clearCache().catch(() => undefined)))
 }
 
 /**

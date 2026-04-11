@@ -1,5 +1,6 @@
 import { useId, type SVGProps } from 'react'
 import type { ServiceId } from '../../shared/services'
+import googleLabsSrc from '../assets/google-labs.svg?url'
 
 /** Primary brand fills (native hues; independent of card accent bar) */
 const MONO_PATH_FILL: Partial<Record<ServiceId, string>> = {
@@ -206,6 +207,20 @@ export function ServiceBrandIcon({
         </defs>
         <path fill={`url(#${mg})`} fillRule="evenodd" clipRule="evenodd" d={MISTRAL_D} />
       </svg>
+    )
+  }
+
+  if (id === 'labs') {
+    return (
+      <img
+        src={googleLabsSrc}
+        alt=""
+        aria-hidden
+        draggable={false}
+        className={`${base} object-contain`}
+        width={width}
+        height={height}
+      />
     )
   }
 

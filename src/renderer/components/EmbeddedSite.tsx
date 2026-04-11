@@ -18,10 +18,6 @@ interface EmbeddedSiteProps {
   serviceId: ServiceId
 }
 
-/** DeepSeek’s CDN/WAF often serves a blank page for Electron’s default UA; match desktop Chrome. */
-const DEEPSEEK_WEBVIEW_UA =
-  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0'
-
 function createWebview(serviceId: ServiceId): WebviewEl {
   const { homeUrl } = getService(serviceId)
   const w = document.createElement('webview') as WebviewEl
@@ -29,9 +25,6 @@ function createWebview(serviceId: ServiceId): WebviewEl {
     serviceId === 'deepseek' ? 'persist:svc.deepseek.chrome-ua' : `persist:svc.${serviceId}`
   w.src = homeUrl
   w.setAttribute('allowpopups', 'allowpopups')
-  if (serviceId === 'deepseek') {
-    w.setAttribute('useragent', DEEPSEEK_WEBVIEW_UA)
-  }
   w.style.border = 'none'
   w.style.backgroundColor = '#141416'
   return w

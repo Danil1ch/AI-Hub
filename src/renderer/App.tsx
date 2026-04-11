@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { ChooseServiceScreen } from './components/ChooseServiceScreen'
 import { EmbeddedWorkspace, type EmbeddedWorkspaceHandle } from './components/EmbeddedWorkspace'
 import { TopBar } from './components/TopBar'
@@ -57,9 +57,12 @@ export default function App() {
           active={active}
           onSelect={setActive}
           onHardReload={() => embeddedRef.current?.hardReload()}
+          onGoHome={() => embeddedRef.current?.goHome()}
         />
       </div>
-      <EmbeddedWorkspace ref={embeddedRef} />
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+        <EmbeddedWorkspace ref={embeddedRef} />
+      </div>
     </div>
   )
 }

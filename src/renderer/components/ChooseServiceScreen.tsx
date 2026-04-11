@@ -1,6 +1,7 @@
 import type { CSSProperties } from 'react'
 import { SERVICES, type ServiceId } from '../../shared/services'
 import { useHubStore } from '../store'
+import { useTranslation } from '../useTranslation'
 import { ServiceAccentDot, ServiceBrandIcon } from './ServiceBrandIcon'
 
 interface ChooseServiceScreenProps {
@@ -8,6 +9,7 @@ interface ChooseServiceScreenProps {
 }
 
 export function ChooseServiceScreen({ onSelect }: ChooseServiceScreenProps) {
+  const { t } = useTranslation()
   const lastSessionId = useHubStore((s) => s.lastSessionId)
 
   return (
@@ -37,10 +39,10 @@ export function ChooseServiceScreen({ onSelect }: ChooseServiceScreenProps) {
           <div className="mx-auto flex w-full max-w-[880px] flex-col">
           <header className="mb-10 text-center max-[599px]:mb-8">
             <h1 className="text-[28px] font-semibold leading-tight tracking-[-0.035em] text-stone-100 min-[640px]:text-[30px] min-[900px]:text-[32px]">
-              Where do you want to start?
+              {t('choose.title')}
             </h1>
             <p className="mx-auto mt-2.5 max-w-xl text-[14px] font-medium leading-snug tracking-[-0.015em] text-stone-400 min-[900px]:text-[15px]">
-              All your AI tools in one place
+              {t('choose.subtitle')}
             </p>
           </header>
 
@@ -80,11 +82,11 @@ export function ChooseServiceScreen({ onSelect }: ChooseServiceScreenProps) {
                 onClick={() => onSelect(lastSessionId)}
                 className="rounded-lg px-4 py-2.5 text-[14px] font-medium tracking-[-0.01em] text-stone-400 transition-colors duration-200 hover:bg-white/[0.06] hover:text-stone-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/15 focus-visible:ring-offset-2 focus-visible:ring-offset-[#09090b]"
               >
-                Open last session
+                {t('choose.lastSession')}
               </button>
             ) : null}
             <p className="text-center text-[13px] font-medium tracking-[-0.01em] text-stone-500">
-              You can switch anytime
+              {t('choose.footer')}
             </p>
           </footer>
           </div>

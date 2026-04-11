@@ -2,6 +2,8 @@ export type ServiceId =
   | 'chatgpt'
   | 'claude'
   | 'gemini'
+  | 'aistudio'
+  | 'labs'
   | 'qwen'
   | 'deepseek'
   | 'kimi'
@@ -23,6 +25,8 @@ export const SERVICES: Service[] = [
   { id: 'chatgpt', label: 'ChatGPT', accent: '#10A37F', homeUrl: 'https://chatgpt.com' },
   { id: 'claude', label: 'Claude', accent: '#F97316', homeUrl: 'https://claude.ai' },
   { id: 'gemini', label: 'Gemini', accent: '#6366F1', homeUrl: 'https://gemini.google.com' },
+  { id: 'aistudio', label: 'AI Studio', accent: '#8B5CF6', homeUrl: 'https://aistudio.google.com' },
+  { id: 'labs', label: 'Google Labs', accent: '#EC4899', homeUrl: 'https://labs.google/' },
   { id: 'qwen', label: 'Qwen', accent: '#9333EA', homeUrl: 'https://chat.qwen.ai' },
   { id: 'deepseek', label: 'DeepSeek', accent: '#38BDF8', homeUrl: 'https://chat.deepseek.com' },
   { id: 'kimi', label: 'Kimi', accent: '#A78BFA', homeUrl: 'https://kimi.moonshot.cn' },

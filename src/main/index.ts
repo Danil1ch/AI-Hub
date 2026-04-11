@@ -4,7 +4,10 @@ import fs from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { readAppSettings, writeAppSettings, applyOpenAtLoginSetting, markIntroSeen } from './appSettings'
 import { coerceInternetDnsSave, defaultUserDataDirForAiHub, readInternetDnsResolved, writeInternetDnsResolved } from './internetDnsConfig'
-import { applyInternetDnsHostResolver, flushHostResolverCaches } from './hostResolverDns'
+import { applyInternetDnsHostResolver, flushHostResolverCaches, flushInternetDnsAfterConfigChange } from './hostResolverDns'
+import { flushWindowsSystemDnsCache } from './winDnsFlush'
+import { registerGuestPopupInplaceNavigation } from './guestPopupRedirect'
+import { registerGoogleCompatibleSessions } from './googleCompatibleSession'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -19,6 +22,8 @@ type WindowStateV1 = {
 
 /** Same folder for early DNS config read, IPC writes, and persisted profile (dev + prod). */
 if (!app.isReady()) {
+  /** Prefer IPv4 first — reduces flaky timeouts (ERR_TIMED_OUT) on some networks with broken IPv6. */
+  app.commandLine.appendSwitch('dns-result-order', 'ipv4first')
   app.setPath('userData', defaultUserDataDirForAiHub())
 }
 
@@ -28,6 +33,8 @@ if (process.platform === 'win32') {
 }
 
 process.title = 'AI Hub'
+
+registerGuestPopupInplaceNavigation(() => mainWindow)
 
 function resolveIconPath(): string | undefined {
   const candidates = app.isPackaged
@@ -264,6 +271,7 @@ function debounce(fn: () => void, ms: number): () => void {
 }
 
 app.whenReady().then(() => {
+  registerGoogleCompatibleSessions()
   applyInternetDnsHostResolver()
   void flushHostResolverCaches()
 
@@ -271,12 +279,13 @@ app.whenReady().then(() => {
 
   ipcMain.handle('hub:internet-dns-get', () => readInternetDnsResolved())
 
-  ipcMain.handle('hub:internet-dns-save', (_event, raw: unknown) => {
+  ipcMain.handle('hub:internet-dns-save', async (_event, raw: unknown) => {
     const coerced = coerceInternetDnsSave(raw)
     if (!coerced.ok) return { ok: false as const, error: coerced.error }
     writeInternetDnsResolved(coerced.value)
     applyInternetDnsHostResolver(coerced.value)
-    void flushHostResolverCaches()
+    await flushInternetDnsAfterConfigChange()
+    await flushWindowsSystemDnsCache()
     return { ok: true as const, needsRestart: false, config: coerced.value }
   })
 
