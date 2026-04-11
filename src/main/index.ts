@@ -7,7 +7,6 @@ import { coerceInternetDnsSave, defaultUserDataDirForAiHub, readInternetDnsResol
 import { applyInternetDnsHostResolver, flushHostResolverCaches, flushInternetDnsAfterConfigChange } from './hostResolverDns'
 import { flushWindowsSystemDnsCache } from './winDnsFlush'
 import { registerGuestPopupInplaceNavigation } from './guestPopupRedirect'
-import { registerGoogleCompatibleSessions } from './googleCompatibleSession'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -271,7 +270,6 @@ function debounce(fn: () => void, ms: number): () => void {
 }
 
 app.whenReady().then(() => {
-  registerGoogleCompatibleSessions()
   applyInternetDnsHostResolver()
   void flushHostResolverCaches()
 

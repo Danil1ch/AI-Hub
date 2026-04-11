@@ -61,6 +61,29 @@ function isIgnoredMergeUrl(url: string): boolean {
   return /^devtools:/i.test(url) || url.startsWith('chrome://') || url.startsWith('file://')
 }
 
+/**
+ * Google sign-in / OAuth must use a real BrowserWindow (same session), not loadURL into <webview>.
+ * Merging those into the embed triggers "browser not secure" and breaks OAuth flows.
+ */
+function shouldAllowNormalPopupWindow(url: string): boolean {
+  try {
+    const u = new URL(url)
+    const h = u.hostname.toLowerCase()
+    const path = `${u.pathname}${u.search}`.toLowerCase()
+    if (h === 'accounts.google.com' || h.endsWith('.accounts.google.com')) return true
+    if (h === 'myaccount.google.com') return true
+    if (h === 'signin.google.com') return true
+    if (h === 'accounts.youtube.com' || h === 'signin.youtube.com') return true
+    if (h.endsWith('.google.com') && (path.includes('/signin') || path.includes('/servicelogin') || path.includes('/oauth'))) {
+      return true
+    }
+    if (path.includes('/oauth2/') || path.includes('oauth2callback')) return true
+    return false
+  } catch {
+    return false
+  }
+}
+
 function resolveEmbedGuestForPopup(popupWc: Electron.WebContents): Electron.WebContents | null {
   if (popupWc.isDestroyed()) return null
 
@@ -126,6 +149,9 @@ export function registerGuestPopupInplaceNavigation(getPrimaryWindow: () => Brow
       if (!isRemoteHttpPage(url)) {
         return { action: 'allow' }
       }
+      if (shouldAllowNormalPopupWindow(url)) {
+        return { action: 'allow' }
+      }
       void guest.loadURL(url)
       return { action: 'deny' }
     })
@@ -136,6 +162,7 @@ export function registerGuestPopupInplaceNavigation(getPrimaryWindow: () => Brow
       const url = details.url
       if (!url || !isHttpUrl(url) || isIgnoredMergeUrl(url)) return
       if (!isRemoteHttpPage(url)) return
+      if (shouldAllowNormalPopupWindow(url)) return
       void guest.loadURL(url)
       if (!childWindow.isDestroyed()) {
         childWindow.close()
@@ -167,6 +194,15 @@ export function registerGuestPopupInplaceNavigation(getPrimaryWindow: () => Brow
       const url = evt.url
       if (!url || !isHttpUrl(url) || isIgnoredMergeUrl(url)) return
       if (!isRemoteHttpPage(url)) return
+      if (shouldAllowNormalPopupWindow(url)) {
+        popupWc.removeListener('did-start-navigation', onNav)
+        try {
+          popupWin.show()
+        } catch {
+          /* ignore */
+        }
+        return
+      }
 
       popupWc.removeListener('did-start-navigation', onNav)
       if (!openerWc.isDestroyed()) {
